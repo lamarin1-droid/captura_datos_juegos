@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChispaPlay · Juega, diviértete y gana</title>
+  <meta name="description" content="Juega gratis en tu navegador, supera los retos y desbloquea tu premio en ChispaPlay.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    /* ===== Tokens ===== */
+    :root {
+      --bs-body-bg: #F8FAFC; --bs-body-color: #0F172A;
+      --bs-body-font-family: 'Inter', system-ui, sans-serif;
+      --bs-border-color: #E2E8F0;
+      --c-primary: #4F46E5; --c-primary-dark: #4338CA;
+      --c-success: #10B981; --c-muted: #64748B; --c-border: #E2E8F0;
+      --section-y: 2rem;               /* móvil */
+    }
+    @media (min-width: 768px)  { :root { --section-y: 3.5rem; } }
+    @media (min-width: 1200px) { :root { --section-y: 5rem; } }
+
+    body { background: #F8FAFC; color: #0F172A; }
+    h1, h2, h3, h4, h5, .btn { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5 { font-weight: 700; color: #0F172A; }
+    .text-muted-custom { color: var(--c-muted) !important; }
+    .section-pad { padding-block: var(--section-y); }
+
+    /* ===== Botones ===== */
+    .btn-primary {
+      --bs-btn-bg: #4F46E5; --bs-btn-border-color: #4F46E5;
+      --bs-btn-hover-bg: #4338CA; --bs-btn-hover-border-color: #4338CA;
+      --bs-btn-active-bg: #4338CA; --bs-btn-active-border-color: #4338CA;
+      --bs-btn-focus-shadow-rgb: 79,70,229; letter-spacing: .02em;
+    }
+    /* En escritorio el CTA del hero no se estira a todo el ancho */
+    @media (min-width: 992px) { .cta-hero { width: auto !important; min-width: 280px; } }
+
+    /* ===== Tarjetas ===== */
+    .card { border: 2px solid var(--c-border); background: #fff; }
+    @media (min-width: 992px) {
+      .card-hover { transition: transform .2s ease, border-color .2s ease; }
+      .card-hover:hover { transform: translateY(-4px); border-color: #C7D2FE; }
+    }
+    @media (prefers-reduced-motion: reduce) { .card-hover { transition: none; } .card-hover:hover { transform: none; } }
+
+    .section-divider { border: 0; border-top: 2px dashed var(--c-border); opacity: 1; margin: 0; }
+
+    /* ===== Header ===== */
+    .site-header { background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 2px solid var(--c-border); }
+    .logo-ph { display: inline-block; border: 2px solid #0F172A; border-radius: .25rem; padding: .45rem 1.6rem;
+      font: 700 .8rem 'Plus Jakarta Sans', sans-serif; color: #0F172A; text-decoration: none; }
+    .nav-desktop a { color: #0F172A; text-decoration: none; font-weight: 500; padding: .5rem 1rem; border-radius: .5rem; }
+    .nav-desktop a:hover { color: var(--c-primary); background: #EEF2FF; }
+
+    /* ===== Hero ===== */
+    .hero { background: linear-gradient(180deg, #fff 0%, #F8FAFC 100%); }
+    .hero h1 { font-size: clamp(1.9rem, 6vw + .5rem, 3.4rem); line-height: 1.12; }
+    .hero-lead { font-size: 1.05rem; max-width: 34em; }
+    .hero-visual { border: 2px solid var(--c-border); background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      aspect-ratio: 16 / 10; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .hero-visual .bi { font-size: 3.5rem; color: var(--c-primary); }
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; }
+    @media (min-width: 992px) { .hero-visual { aspect-ratio: 4 / 3; } .hero-visual .bi { font-size: 6rem; } .hero-lead { font-size: 1.15rem; } }
+
+    /* ===== Juegos ===== */
+    .game-thumb { width: 88px; height: 88px; flex-shrink: 0; background: #EEF2FF; border: 2px solid var(--c-border);
+      display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .game-thumb .bi { font-size: 2rem; color: var(--c-primary); }
+    @media (min-width: 768px) { .game-thumb { width: 112px; height: 112px; } .game-thumb .bi { font-size: 2.5rem; } }
+
+    /* ===== Pasos ===== */
+    .step-icon { width: 48px; height: 48px; border-radius: 50%; background: #EEF2FF; color: var(--c-primary);
+      display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .step-card h3 { font-size: .9rem; margin: 0; }
+    @media (min-width: 768px) {
+      .step-icon { width: 64px; height: 64px; font-size: 1.8rem; }
+      .step-card h3 { font-size: 1.1rem; }
+      .step-card p { display: block !important; }
+    }
+
+    /* ===== Premio ===== */
+    .prize-card { border-color: #A7F3D0; }
+    .prize-thumb { width: 88px; height: 88px; flex-shrink: 0; background: #ECFDF5; border: 2px solid #A7F3D0;
+      display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .prize-thumb .bi { font-size: 2rem; color: var(--c-success); }
+    .prize-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    @media (min-width: 768px) { .prize-thumb { width: 140px; height: 140px; } .prize-thumb .bi { font-size: 3rem; } }
+
+    /* ===== Confianza ===== */
+    .trust-item { font-size: .78rem; color: var(--c-muted); line-height: 1.3; }
+    .trust-item .bi { font-size: 1.5rem; color: #0F172A; display: block; margin-bottom: .35rem; }
+    @media (min-width: 768px) {
+      .trust-item { font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: .75rem; text-align: left; }
+      .trust-item .bi { display: inline; font-size: 1.75rem; margin: 0; }
+    }
+
+    /* ===== Footer ===== */
+    footer { background: #EEF2FF; background: #EEF2F7; border-top: 2px solid var(--c-border); }
+    footer a { color: #0F172A; font-size: .9rem; }
+    footer a:hover { color: var(--c-primary); }
+
+    /* ===== Marca ===== */
+    .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .brand-logo { height: 40px; width: auto; border-radius: .5rem; object-fit: contain; }
+    .brand-name { font: 700 1.6rem/1 'Plus Jakarta Sans', sans-serif; letter-spacing: -.03em; color: #0F172A; }
+    .brand-name span { color: var(--c-primary); }
+    @media (min-width: 992px) { .brand-logo { height: 46px; } .brand-name { font-size: 1.85rem; } }
+
+    :focus-visible { outline: 3px solid rgba(79,70,229,.5); outline-offset: 2px; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HEADER -->
+  <header class="site-header sticky-top">
+    <nav class="container-xl d-flex align-items-center justify-content-between py-3" aria-label="Principal">
+      <a href="#" class="brand" aria-label="ChispaPlay, inicio"><img src="img/logo.jpg" alt="" class="brand-logo" height="40"><span class="brand-name">Chispa<span>Play</span></span></a>
+
+      <!-- Escritorio -->
+      <div class="nav-desktop d-none d-lg-flex align-items-center gap-1">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#premio">Premio</a>
+        <a href="#juegos" class="btn btn-primary fw-bold rounded-3 px-4 ms-3 text-uppercase">Jugar ahora</a>
+      </div>
+
+      <!-- Móvil / tablet -->
+      <button class="btn btn-outline-dark rounded-3 px-2 py-1 d-lg-none" type="button"
+              data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral" aria-label="Abrir menú">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+    </nav>
+  </header>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="menuLateral" aria-labelledby="menuTitulo" style="max-width:80vw;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="menuTitulo">Menú</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="nav flex-column fs-6">
+        <li class="nav-item mb-2"><a class="btn btn-primary fw-bold rounded-3 w-100 text-uppercase" href="#juegos" data-bs-dismiss="offcanvas">Jugar ahora</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="#como-funciona" data-bs-dismiss="offcanvas">Cómo funciona</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="#premio" data-bs-dismiss="offcanvas">Premio</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="#contacto" data-bs-dismiss="offcanvas">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- 2. HERO -->
+    <section class="hero section-pad" aria-labelledby="titular">
+      <div class="container-xl">
+        <div class="row align-items-center g-4 g-lg-5">
+          <div class="col-lg-6">
+            <h1 id="titular" class="mb-3">Juega, diviértete y gana premios</h1>
+            <p class="hero-lead text-muted-custom mb-4">
+              Elige uno de nuestros minijuegos, supera el reto y desbloquea tu premio al registrarte.
+            </p>
+            <a href="#juegos" class="btn btn-primary btn-lg w-100 cta-hero fw-bold rounded-3 py-3 text-uppercase">Jugar ahora</a>
+            <p class="text-center text-lg-start text-muted-custom small mt-3 mb-0">Gratis · 1 minuto · Se juega en tu navegador</p>
+          </div>
+          <div class="col-lg-6">
+            <div class="hero-visual rounded-4">
+              <img src="img/home.jpeg" alt="Personas jugando en ChispaPlay" width="640" height="480" fetchpriority="high">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 3. ELIGE TU JUEGO -->
+    <section id="juegos" class="section-pad" aria-labelledby="t-juegos">
+      <div class="container-xl">
+        <h2 id="t-juegos" class="h3 mb-4">Elige tu juego</h2>
+        <div class="row g-3 g-lg-4">
+
+          <div class="col-md-6">
+            <article class="card card-hover rounded-4 p-3 p-lg-4 h-100">
+              <div class="d-flex gap-3 flex-grow-1">
+                <div class="game-thumb rounded-3">
+                  <!-- <img src="img/juego1.webp" alt="Trivia IA"> -->
+                  <i class="bi bi-patch-question" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <h3 class="h5 mb-1">Juego 1 · Trivia IA</h3>
+                  <p class="text-muted-custom mb-0">Preguntas generadas por IA, solo para ti.</p>
+                </div>
+              </div>
+              <a href="juego1.html" class="btn btn-primary btn-lg w-100 fw-bold rounded-3 py-3 text-uppercase mt-3">Jugar</a>
+            </article>
+          </div>
+
+          <div class="col-md-6">
+            <article class="card card-hover rounded-4 p-3 p-lg-4 h-100">
+              <div class="d-flex gap-3 flex-grow-1">
+                <div class="game-thumb rounded-3">
+                  <img src="img/memorygame.jpg" alt="Juego de memoria de cartas" loading="lazy">
+                </div>
+                <div>
+                  <h3 class="h5 mb-1">Juego 2 · Memoria de cartas</h3>
+                  <p class="text-muted-custom mb-0">Encuentra todas las parejas antes de que se acabe el tiempo.</p>
+                </div>
+              </div>
+              <a href="juego2.html" class="btn btn-primary btn-lg w-100 fw-bold rounded-3 py-3 text-uppercase mt-3">Jugar</a>
+            </article>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 4. CÓMO FUNCIONA -->
+    <section id="como-funciona" class="section-pad" aria-labelledby="t-como">
+      <div class="container-xl">
+        <h2 id="t-como" class="h3 mb-4">Cómo funciona</h2>
+        <div class="row g-2 g-md-4">
+          <div class="col-4">
+            <div class="card card-hover rounded-4 p-2 py-3 p-md-4 h-100 text-center step-card">
+              <div><span class="step-icon mb-2 mb-md-3"><i class="bi bi-joystick" aria-hidden="true"></i></span></div>
+              <h3>Juega</h3>
+              <p class="text-muted-custom mt-2 mb-0 d-none">Elige uno de los dos minijuegos y completa tu partida.</p>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card card-hover rounded-4 p-2 py-3 p-md-4 h-100 text-center step-card">
+              <div><span class="step-icon mb-2 mb-md-3"><i class="bi bi-trophy" aria-hidden="true"></i></span></div>
+              <h3>Suma puntos</h3>
+              <p class="text-muted-custom mt-2 mb-0 d-none">Acumula puntos durante tu partida y mejora tu marca.</p>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card card-hover rounded-4 p-2 py-3 p-md-4 h-100 text-center step-card">
+              <div><span class="step-icon mb-2 mb-md-3"><i class="bi bi-unlock" aria-hidden="true"></i></span></div>
+              <h3>Regístrate y desbloquea</h3>
+              <p class="text-muted-custom mt-2 mb-0 d-none">Deja tus datos y accede a tu puntaje y premio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 5. PREMIO -->
+    <section id="premio" class="section-pad" aria-labelledby="t-premio">
+      <div class="container-xl">
+        <div class="card prize-card rounded-4 p-3 p-md-4">
+          <div class="d-flex align-items-center gap-3 gap-md-4">
+            <div class="prize-thumb rounded-3">
+              <!-- <img src="img/premio.webp" alt="Premio"> -->
+              <i class="bi bi-gift" aria-hidden="true"></i>
+            </div>
+            <div>
+              <span class="badge text-bg-success rounded-pill mb-2">Premio</span>
+              <h2 id="t-premio" class="h4 mb-1">Premio: [DESCRIPCIÓN]</h2>
+              <p class="text-muted-custom mb-0"><i class="bi bi-lock me-1" aria-hidden="true"></i>Se desbloquea al registrarte</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- 6. CONFIANZA -->
+    <section class="bg-white py-4 py-md-5" aria-label="Seguridad y confianza">
+      <div class="container-xl">
+        <div class="row text-center g-2">
+          <div class="col-4 trust-item"><i class="bi bi-lock" aria-hidden="true"></i><span>Conexión segura HTTPS</span></div>
+          <div class="col-4 trust-item"><i class="bi bi-shield-check" aria-hidden="true"></i><span>Datos protegidos (LOPDP)</span></div>
+          <div class="col-4 trust-item"><i class="bi bi-clock" aria-hidden="true"></i><span>Menos de 1 minuto</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 7. FOOTER -->
+  <footer id="contacto" class="py-4 py-md-5">
+    <div class="container-xl d-md-flex align-items-md-center justify-content-md-between gap-4">
+      <a href="#" class="brand mb-3 mb-md-0" aria-label="ChispaPlay, inicio"><img src="img/logo.jpg" alt="" class="brand-logo" height="40"><span class="brand-name">Chispa<span>Play</span></span></a>
+      <ul class="list-inline my-3 my-md-0">
+        <li class="list-inline-item me-3"><a href="/politica-de-privacidad">Política de privacidad</a></li>
+        <li class="list-inline-item me-3"><a href="/terminos-y-condiciones">Términos y condiciones</a></li>
+        <li class="list-inline-item"><a href="/contacto">Contacto</a></li>
+      </ul>
+      <p class="small text-muted-custom mb-0">© ChispaPlay · Todos los derechos reservados</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
