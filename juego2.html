@@ -1,365 +1,317 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego 2 - Memoria Fotográfica</title>
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --pastel-bg: #fdfaf6;
-            --pastel-rosa: #ffd1dc;
-            --pastel-celeste: #b4e1ff;
-            --pastel-texto: #5a5560;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memoria de cartas · ChispaPlay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    /* ===== Tokens (iguales al home) ===== */
+    :root {
+      --bs-body-bg: #F8FAFC; --bs-body-color: #0F172A;
+      --bs-body-font-family: 'Inter', system-ui, sans-serif;
+      --bs-border-color: #E2E8F0;
+      --c-primary: #4F46E5; --c-primary-dark: #4338CA;
+      --c-success: #10B981; --c-muted: #64748B; --c-border: #E2E8F0;
+      --section-y: 2rem;
+    }
+    @media (min-width: 768px) { :root { --section-y: 3.5rem; } }
 
-        body {
-            background-color: var(--pastel-bg);
-            color: var(--pastel-texto);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+    body { background: #F8FAFC; color: #0F172A; }
+    h1, h2, h3, h4, h5, .btn { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+    h1, h2, h3, h4, h5 { font-weight: 700; color: #0F172A; }
+    .text-muted-custom { color: var(--c-muted) !important; }
+    .section-pad { padding-block: var(--section-y); }
 
-        .navbar-pastel {
-            background-color: #e8dff5 !important;
-        }
+    /* Botones */
+    .btn { touch-action: manipulation; letter-spacing: .02em; }
+    .btn-primary {
+      --bs-btn-bg: #4F46E5; --bs-btn-border-color: #4F46E5;
+      --bs-btn-hover-bg: #4338CA; --bs-btn-hover-border-color: #4338CA;
+      --bs-btn-active-bg: #4338CA; --bs-btn-active-border-color: #4338CA;
+      --bs-btn-focus-shadow-rgb: 79,70,229;
+    }
+    .btn-outline-primary {
+      --bs-btn-color: #4F46E5; --bs-btn-border-color: #4F46E5;
+      --bs-btn-hover-bg: #4F46E5; --bs-btn-hover-border-color: #4F46E5;
+      --bs-btn-active-bg: #4338CA; --bs-btn-active-border-color: #4338CA;
+    }
 
-        .card-custom {
-            border: none;
-            border-radius: 1.5rem;
-            background-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(180, 225, 255, 0.25);
-        }
+    /* Tarjetas */
+    .card { border: 2px solid var(--c-border); background: #fff; }
 
-        .img-custom-ui {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+    /* Marca */
+    .site-header { background: rgba(255,255,255,.95); backdrop-filter: blur(8px); border-bottom: 2px solid var(--c-border); }
+    .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .brand-logo { height: 40px; width: auto; border-radius: .5rem; object-fit: contain; }
+    .brand-name { font: 700 1.6rem/1 'Plus Jakarta Sans', sans-serif; letter-spacing: -.03em; color: #0F172A; }
+    .brand-name span { color: var(--c-primary); }
+    @media (min-width: 992px) { .brand-logo { height: 46px; } .brand-name { font-size: 1.85rem; } }
 
-        .tablero-memoria {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            max-width: 420px;
-            margin: 0 auto;
-        }
+    /* Footer */
+    footer { background: #EEF2F7; border-top: 2px solid var(--c-border); }
+    footer a { color: #0F172A; font-size: .9rem; }
+    footer a:hover { color: var(--c-primary); }
 
-        @media (max-width: 576px) {
-            .tablero-memoria {
-                max-width: 320px;
-                gap: 8px;
-            }
-        }
+    /* ===== Juego ===== */
+    .game-card { max-width: 560px; }
+    .cover-img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 2px solid var(--c-border); }
+    .icon-circle { width: 72px; height: 72px; border-radius: 50%; display: inline-flex; align-items: center;
+      justify-content: center; font-size: 2rem; background: #EEF2FF; color: var(--c-primary); }
+    .icon-circle.ok { background: #ECFDF5; color: var(--c-success); }
 
-        .carta {
-            aspect-ratio: 1 / 1;
-            background-color: var(--pastel-celeste);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.25s ease, background-color 0.25s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
-            border: 2px solid #ffffff;
-            overflow: hidden;
-            font-size: 1.5rem;
-            color: white;
-            font-weight: bold;
-        }
+    .form-control { border: 2px solid var(--c-border); border-radius: .75rem; padding: .8rem 1rem; background: #fff; }
+    .form-control:focus { border-color: var(--c-primary); box-shadow: 0 0 0 .25rem rgba(79,70,229,.15); }
+    .form-label { font-weight: 500; font-size: .9rem; }
 
-        .carta:hover {
-            transform: scale(1.05);
-        }
+    .stat { background: #F8FAFC; border: 2px solid var(--c-border); border-radius: 1rem; padding: .75rem 1rem; }
+    .stat small { color: var(--c-muted); font-size: .75rem; display: block; }
+    .stat strong { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; }
 
-        .carta.volteada {
-            background-color: #ffffff;
-            transform: rotateY(180deg);
-        }
+    /* Tablero y cartas */
+    .tablero-memoria { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 420px; margin: 0 auto; }
+    @media (min-width: 576px) { .tablero-memoria { gap: 10px; } }
 
-        .carta img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
+    .carta {
+      aspect-ratio: 1 / 1; background: var(--c-primary); border: 2px solid var(--c-primary-dark);
+      border-radius: 1rem; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; user-select: none; overflow: hidden; color: #fff; font-size: 1.6rem;
+      touch-action: manipulation; transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+    }
+    @media (hover: hover) { .carta:not(.volteada):not(.emparejada):hover { background: var(--c-primary-dark); transform: translateY(-2px); } }
+    .carta img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .carta.volteada { background: #fff; border-color: var(--c-border); }
+    .carta.volteada img { display: block; }
+    .carta.volteada span { display: none; }
+    .carta.emparejada { background: #ECFDF5; border-color: var(--c-success); cursor: default; transform: scale(.96); }
+    @media (prefers-reduced-motion: reduce) { .carta { transition: none; } }
 
-        .carta.volteada img {
-            display: block;
-        }
-
-        .carta.volteada span {
-            display: none;
-        }
-
-        .carta.emparejada {
-            background-color: #dcedc1;
-            cursor: default;
-            transform: scale(0.96);
-        }
-
-        .btn-pastel-rosa {
-            background-color: #ffb6c1;
-            border-color: #ffb6c1;
-            color: #4a4453;
-            font-weight: 600;
-            border-radius: 50rem;
-            transition: all 0.2s;
-        }
-
-        .btn-pastel-rosa:hover {
-            background-color: #ff97a7;
-            border-color: #ff97a7;
-            color: #2b2633;
-        }
-    </style>
+    :focus-visible { outline: 3px solid rgba(79,70,229,.5); outline-offset: 2px; }
+  </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <!-- Navbar Superior -->
-    <nav class="navbar navbar-light navbar-pastel shadow-sm mb-4">
-        <div class="container">
-            <a class="btn btn-outline-dark btn-sm rounded-pill px-3 border-0 bg-white" href="index.html">&larr; Menú Principal</a>
-            <span class="navbar-brand mb-0 h1 fw-bold fs-6 text-dark">Juego 2 · Memoria Fotográfica</span>
-        </div>
+  <!-- HEADER -->
+  <header class="site-header sticky-top">
+    <nav class="container-xl d-flex align-items-center justify-content-between py-3" aria-label="Principal">
+      <a href="index.html" class="brand" aria-label="ChispaPlay, inicio"><img src="img/logo.jpg" alt="" class="brand-logo" height="40"><span class="brand-name">Chispa<span>Play</span></span></a>
+      <a href="index.html" class="btn btn-outline-dark rounded-3 fw-bold"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Inicio</a>
     </nav>
+  </header>
 
-    <!-- Contenido Principal -->
-    <div class="container pb-4 my-auto" style="max-width: 520px;">
-        <div class="card card-custom p-4 p-md-5">
+  <main class="container-xl section-pad flex-grow-1">
+    <div class="card game-card rounded-4 p-3 p-md-4 mx-auto">
 
-            <!-- VISTA 0: PORTADA DEL JUEGO -->
-            <div id="vista-portada" class="text-center">
-                <img src="img/portada-juego.jpg" alt="Portada" class="img-custom-ui" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=60';">
-                
-                <h2 class="fw-bold text-dark mb-2">Sweet Memory</h2>
-                <p class="text-muted small mb-4">Descubre las parejas de fotos ocultas en el menor tiempo posible. ¡Pon a prueba tu agilidad visual!</p>
+      <!-- VISTA 0: PORTADA -->
+      <div id="vista-portada" class="text-center">
+        <img src="img/memorygame.jpg" alt="Juego de memoria de cartas" class="cover-img rounded-3 mb-4">
+        <span class="badge text-bg-success rounded-pill mb-2">Juego 2</span>
+        <h1 class="h3 mb-2">Memoria de cartas</h1>
+        <p class="text-muted-custom mb-4">Encuentra todas las parejas de fotos en el menor tiempo posible. ¡Pon a prueba tu memoria!</p>
+        <button type="button" class="btn btn-primary btn-lg w-100 fw-bold rounded-3 py-3 text-uppercase" onclick="irARegistro()">
+          <i class="bi bi-play-fill me-1" aria-hidden="true"></i>Empezar partida
+        </button>
+      </div>
 
-                <button class="btn btn-pastel-rosa btn-lg w-100 py-3 shadow-sm fw-bold" onclick="irARegistro()">
-                    ¡Empezar Partida! 🎮
-                </button>
-            </div>
-
-            <!-- VISTA 1: REGISTRO DE DATOS (NOMBRE Y CORREO) -->
-            <div id="vista-inicio" class="d-none">
-                <img src="img/registro-foto.jpg" alt="Registro" class="img-custom-ui" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=60';">
-
-                <div class="text-center mb-3">
-                    <h3 class="fw-bold text-dark">Registro de Jugador</h3>
-                    <p class="text-muted small">Ingresa tus datos para registrar tu puntaje en la plataforma.</p>
-                </div>
-
-                <form id="form-jugador" onsubmit="iniciarPartida(event)">
-                    <div class="mb-3 text-start">
-                        <label for="nombreJugador" class="form-label fw-semibold small text-secondary">Tu Nombre</label>
-                        <input type="text" class="form-control form-control-lg bg-light border-0 py-2 fs-6" id="nombreJugador" placeholder="Ej. Carlos" required>
-                    </div>
-                    <div class="mb-4 text-start">
-                        <label for="correoJugador" class="form-label fw-semibold small text-secondary">Tu Correo Electrónico</label>
-                        <input type="email" class="form-control form-control-lg bg-light border-0 py-2 fs-6" id="correoJugador" placeholder="correo@ejemplo.com" required>
-                    </div>
-                    <button type="submit" class="btn btn-pastel-rosa btn-lg w-100 py-3 shadow-sm">
-                        Continuar al Juego
-                    </button>
-                </form>
-            </div>
-
-            <!-- VISTA 2: TABLERO DE JUEGO ACTIVO -->
-            <div id="vista-juego" class="d-none">
-                <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 mb-4">
-                    <div>
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Jugador</small>
-                        <strong id="lbl-jugador" class="text-dark small">---</strong>
-                    </div>
-                    <div class="text-center">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Movimientos</small>
-                        <strong id="lbl-movimientos" class="fs-6 text-dark">0</strong>
-                    </div>
-                    <div class="text-end">
-                        <small class="text-muted d-block" style="font-size: 0.75rem;">Tiempo</small>
-                        <strong id="lbl-tiempo" class="fs-6 text-danger">0s</strong>
-                    </div>
-                </div>
-
-                <!-- Cuadrícula de cartas -->
-                <div id="tablero" class="tablero-memoria mb-4"></div>
-
-                <div class="text-center">
-                    <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" onclick="reiniciarPartida()">Reiniciar Tablero</button>
-                </div>
-            </div>
-
-            <!-- VISTA 3: RESULTADOS / CONFIRMACIÓN -->
-            <div id="vista-resultado" class="d-none text-center py-2">
-                <div class="display-4 mb-2">🌸</div>
-                <h3 class="fw-bold text-dark mb-1">¡Muy bien, <span id="res-nombre"></span>!</h3>
-                <p class="text-muted small mb-4">Completaste el reto fotográfico con éxito.</p>
-
-                <div class="row g-2 justify-content-center mb-4">
-                    <div class="col-6">
-                        <div class="p-3 bg-light rounded-4 border-0">
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">Tiempo Total</small>
-                            <strong id="res-tiempo" class="fs-5 text-dark"></strong>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-3 bg-light rounded-4 border-0">
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">Movimientos</small>
-                            <strong id="res-movimientos" class="fs-5 text-dark"></strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button class="btn btn-pastel-rosa py-2 fw-bold" onclick="volverAlInicio()">Jugar de nuevo</button>
-                    <a href="index.html" class="btn btn-outline-dark py-2 rounded-pill small border-0 bg-light">Volver al Inicio</a>
-                </div>
-            </div>
-
+      <!-- VISTA 1: REGISTRO -->
+      <div id="vista-inicio" class="d-none">
+        <div class="text-center mb-4">
+          <span class="icon-circle mb-3"><i class="bi bi-person-check" aria-hidden="true"></i></span>
+          <h2 class="h4 mb-1">Registro de jugador</h2>
+          <p class="text-muted-custom small mb-0">Ingresa tus datos para registrar tu puntaje.</p>
         </div>
+
+        <form id="form-jugador" onsubmit="iniciarPartida(event)">
+          <div class="mb-3">
+            <label for="nombreJugador" class="form-label">Tu nombre</label>
+            <input type="text" class="form-control form-control-lg fs-6" id="nombreJugador" placeholder="Ej. Carlos" autocomplete="name" required>
+          </div>
+          <div class="mb-4">
+            <label for="correoJugador" class="form-label">Tu correo electrónico</label>
+            <input type="email" class="form-control form-control-lg fs-6" id="correoJugador" placeholder="correo@ejemplo.com" autocomplete="email" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-3 py-3 text-uppercase">Continuar al juego</button>
+        </form>
+      </div>
+
+      <!-- VISTA 2: TABLERO -->
+      <div id="vista-juego" class="d-none">
+        <div class="row g-2 text-center mb-3">
+          <div class="col-4"><div class="stat h-100"><small>Jugador</small><strong id="lbl-jugador" class="text-truncate d-block">---</strong></div></div>
+          <div class="col-4"><div class="stat h-100"><small>Movimientos</small><strong id="lbl-movimientos">0</strong></div></div>
+          <div class="col-4"><div class="stat h-100"><small>Tiempo</small><strong id="lbl-tiempo" style="color: var(--c-primary);">0s</strong></div></div>
+        </div>
+
+        <div id="tablero" class="tablero-memoria mb-4"></div>
+
+        <div class="text-center">
+          <button type="button" class="btn btn-outline-primary fw-bold rounded-3 px-4 text-uppercase" onclick="reiniciarPartida()">
+            <i class="bi bi-arrow-clockwise me-1" aria-hidden="true"></i>Reiniciar tablero
+          </button>
+        </div>
+      </div>
+
+      <!-- VISTA 3: RESULTADO -->
+      <div id="vista-resultado" class="d-none text-center py-2">
+        <span class="icon-circle ok mb-3"><i class="bi bi-trophy-fill" aria-hidden="true"></i></span>
+        <h2 class="h4 mb-1">¡Muy bien, <span id="res-nombre"></span>!</h2>
+        <p class="text-muted-custom small mb-4">Completaste el reto con éxito.</p>
+
+        <div class="row g-2 mb-4">
+          <div class="col-6"><div class="stat"><small>Tiempo total</small><strong id="res-tiempo"></strong></div></div>
+          <div class="col-6"><div class="stat"><small>Movimientos</small><strong id="res-movimientos"></strong></div></div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-primary btn-lg fw-bold rounded-3 py-3 text-uppercase" onclick="volverAlInicio()">Jugar de nuevo</button>
+          <a href="index.html" class="btn btn-outline-dark btn-lg fw-bold rounded-3 py-3 text-uppercase">Volver al inicio</a>
+        </div>
+      </div>
+
     </div>
+  </main>
 
-    <footer class="text-center py-3 text-muted" style="font-size: 0.75rem;">
-       
-    </footer>
+  <!-- FOOTER -->
+  <footer class="py-4 py-md-5">
+    <div class="container-xl d-md-flex align-items-md-center justify-content-md-between gap-4">
+      <a href="index.html" class="brand mb-3 mb-md-0" aria-label="ChispaPlay, inicio"><img src="img/logo.jpg" alt="" class="brand-logo" height="40"><span class="brand-name">Chispa<span>Play</span></span></a>
+      <ul class="list-inline my-3 my-md-0">
+        <li class="list-inline-item me-3"><a href="/politica-de-privacidad">Política de privacidad</a></li>
+        <li class="list-inline-item me-3"><a href="/terminos-y-condiciones">Términos y condiciones</a></li>
+        <li class="list-inline-item"><a href="/contacto">Contacto</a></li>
+      </ul>
+      <p class="small text-muted-custom mb-0">© ChispaPlay · Todos los derechos reservados</p>
+    </div>
+  </footer>
 
-    <!-- JavaScript -->
-    <script>
-        const fotos = [
-            'img/foto1.jpg',
-            'img/foto2.jpg',
-            'img/foto3.jpg',
-            'img/foto4.jpg',
-            'img/foto5.jpg',
-            'img/foto6.jpg'
-        ];
+  <script>
+    // ===== Lógica original de tus colaboradores =====
+    const fotos = [
+      'img/foto1.jpg', 'img/foto2.jpg', 'img/foto3.jpg',
+      'img/foto4.jpg', 'img/foto5.jpg', 'img/foto6.jpg'
+    ];
 
-        let cartas = [];
-        let cartasVolteadas = [];
-        let parejasEncontradas = 0;
-        let movimientos = 0;
-        let segundos = 0;
-        let temporizador = null;
-        let bloqueoTablero = false;
-        let datosUsuario = { nombre: '', correo: '' };
+    let cartas = [];
+    let cartasVolteadas = [];
+    let parejasEncontradas = 0;
+    let movimientos = 0;
+    let segundos = 0;
+    let temporizador = null;
+    let bloqueoTablero = false;
+    let datosUsuario = { nombre: '', correo: '' };
 
-        function irARegistro() {
-            document.getElementById('vista-portada').classList.add('d-none');
-            document.getElementById('vista-inicio').classList.remove('d-none');
+    function irARegistro() {
+      document.getElementById('vista-portada').classList.add('d-none');
+      document.getElementById('vista-inicio').classList.remove('d-none');
+    }
+
+    function iniciarPartida(evento) {
+      evento.preventDefault();
+      datosUsuario.nombre = document.getElementById('nombreJugador').value.trim();
+      datosUsuario.correo = document.getElementById('correoJugador').value.trim();
+
+      document.getElementById('lbl-jugador').innerText = datosUsuario.nombre;
+      document.getElementById('vista-inicio').classList.add('d-none');
+      document.getElementById('vista-juego').classList.remove('d-none');
+
+      prepararTablero();
+    }
+
+    function prepararTablero() {
+      clearInterval(temporizador);
+      movimientos = 0;
+      segundos = 0;
+      parejasEncontradas = 0;
+      cartasVolteadas = [];
+      bloqueoTablero = false;
+
+      document.getElementById('lbl-movimientos').innerText = '0';
+      document.getElementById('lbl-tiempo').innerText = '0s';
+
+      cartas = [...fotos, ...fotos].sort(() => Math.random() - 0.5);
+
+      const tablero = document.getElementById('tablero');
+      tablero.innerHTML = '';
+
+      cartas.forEach((rutaFoto, index) => {
+        const divCarta = document.createElement('div');
+        divCarta.classList.add('carta');
+        divCarta.dataset.foto = rutaFoto;
+        divCarta.dataset.index = index;
+
+        divCarta.innerHTML = `<span><i class="bi bi-question-lg" aria-hidden="true"></i></span><img src="${rutaFoto}" alt="Foto de la carta" onerror="this.style.visibility='hidden'">`;
+
+        divCarta.onclick = () => voltearCarta(divCarta);
+        tablero.appendChild(divCarta);
+      });
+
+      temporizador = setInterval(() => {
+        segundos++;
+        document.getElementById('lbl-tiempo').innerText = `${segundos}s`;
+      }, 1000);
+    }
+
+    function voltearCarta(carta) {
+      if (bloqueoTablero || carta.classList.contains('volteada') || carta.classList.contains('emparejada')) {
+        return;
+      }
+
+      carta.classList.add('volteada');
+      cartasVolteadas.push(carta);
+
+      if (cartasVolteadas.length === 2) {
+        movimientos++;
+        document.getElementById('lbl-movimientos').innerText = movimientos;
+        comprobarPareja();
+      }
+    }
+
+    function comprobarPareja() {
+      bloqueoTablero = true;
+      const [carta1, carta2] = cartasVolteadas;
+
+      if (carta1.dataset.foto === carta2.dataset.foto) {
+        carta1.classList.add('emparejada');
+        carta2.classList.add('emparejada');
+        parejasEncontradas++;
+        cartasVolteadas = [];
+        bloqueoTablero = false;
+
+        if (parejasEncontradas === fotos.length) {
+          finalizarJuego();
         }
+      } else {
+        setTimeout(() => {
+          carta1.classList.remove('volteada');
+          carta2.classList.remove('volteada');
+          cartasVolteadas = [];
+          bloqueoTablero = false;
+        }, 700);
+      }
+    }
 
-        function iniciarPartida(evento) {
-            evento.preventDefault();
-            datosUsuario.nombre = document.getElementById('nombreJugador').value.trim();
-            datosUsuario.correo = document.getElementById('correoJugador').value.trim();
+    function finalizarJuego() {
+      clearInterval(temporizador);
+      document.getElementById('vista-juego').classList.add('d-none');
+      document.getElementById('vista-resultado').classList.remove('d-none');
 
-            document.getElementById('lbl-jugador').innerText = datosUsuario.nombre;
-            document.getElementById('vista-inicio').classList.add('d-none');
-            document.getElementById('vista-juego').classList.remove('d-none');
+      document.getElementById('res-nombre').innerText = datosUsuario.nombre;
+      document.getElementById('res-tiempo').innerText = `${segundos} s`;
+      document.getElementById('res-movimientos').innerText = movimientos;
+    }
 
-            prepararTablero();
-        }
+    function reiniciarPartida() {
+      prepararTablero();
+    }
 
-        function prepararTablero() {
-            clearInterval(temporizador);
-            movimientos = 0;
-            segundos = 0;
-            parejasEncontradas = 0;
-            cartasVolteadas = [];
-            bloqueoTablero = false;
-
-            document.getElementById('lbl-movimientos').innerText = '0';
-            document.getElementById('lbl-tiempo').innerText = '0s';
-
-            cartas = [...fotos, ...fotos].sort(() => Math.random() - 0.5);
-
-            const tablero = document.getElementById('tablero');
-            tablero.innerHTML = '';
-
-            cartas.forEach((rutaFoto, index) => {
-                const divCarta = document.createElement('div');
-                divCarta.classList.add('carta');
-                divCarta.dataset.foto = rutaFoto;
-                divCarta.dataset.index = index;
-
-                divCarta.innerHTML = `<span>•</span><img src="${rutaFoto}" alt="Foto memoria" onerror="this.src='https://via.placeholder.com/150?text=Foto';">`;
-                
-                divCarta.onclick = () => voltearCarta(divCarta);
-                tablero.appendChild(divCarta);
-            });
-
-            temporizador = setInterval(() => {
-                segundos++;
-                document.getElementById('lbl-tiempo').innerText = `${segundos}s`;
-            }, 1000);
-        }
-
-        function voltearCarta(carta) {
-            if (bloqueoTablero || carta.classList.contains('volteada') || carta.classList.contains('emparejada')) {
-                return;
-            }
-
-            carta.classList.add('volteada');
-            cartasVolteadas.push(carta);
-
-            if (cartasVolteadas.length === 2) {
-                movimientos++;
-                document.getElementById('lbl-movimientos').innerText = movimientos;
-                comprobarPareja();
-            }
-        }
-
-        function comprobarPareja() {
-            bloqueoTablero = true;
-            const [carta1, carta2] = cartasVolteadas;
-
-            if (carta1.dataset.foto === carta2.dataset.foto) {
-                carta1.classList.add('emparejada');
-                carta2.classList.add('emparejada');
-                parejasEncontradas++;
-                cartasVolteadas = [];
-                bloqueoTablero = false;
-
-                if (parejasEncontradas === fotos.length) {
-                    finalizarJuego();
-                }
-            } else {
-                setTimeout(() => {
-                    carta1.classList.remove('volteada');
-                    carta2.classList.remove('volteada');
-                    cartasVolteadas = [];
-                    bloqueoTablero = false;
-                }, 700);
-            }
-        }
-
-        function finalizarJuego() {
-            clearInterval(temporizador);
-            document.getElementById('vista-juego').classList.add('d-none');
-            document.getElementById('vista-resultado').classList.remove('d-none');
-
-            document.getElementById('res-nombre').innerText = datosUsuario.nombre;
-            document.getElementById('res-tiempo').innerText = `${segundos} s`;
-            document.getElementById('res-movimientos').innerText = movimientos;
-        }
-
-        function reiniciarPartida() {
-            prepararTablero();
-        }
-
-        function volverAlInicio() {
-            document.getElementById('vista-resultado').classList.add('d-none');
-            document.getElementById('vista-portada').classList.remove('d-none');
-        }
-    </script>
+    function volverAlInicio() {
+      document.getElementById('vista-resultado').classList.add('d-none');
+      document.getElementById('vista-portada').classList.remove('d-none');
+    }
+  </script>
 </body>
 </html>
